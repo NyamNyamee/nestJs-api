@@ -8,12 +8,19 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
+import { Movie } from './entities/movie.entity';
+import { MoviesService } from './movies.service';
 
 @Controller('movies')
 export class MoviesController {
+  // 생성자 주입
+  constructor(private readonly moviesService: MoviesService) {}
+
   @Get()
-  getAll() {
-    return 'This will return always movies';
+  getAll(): Movie[] {
+    return this.moviesService.getAll();
   }
 
   // nestJs와 expressJs에서 @Get(':id')컨트롤러보다 아래에 정의된 @Get()컨트롤러의 url을 id로 인식한다. 혐그인듯?
@@ -25,25 +32,22 @@ export class MoviesController {
 
   @Get(':id')
   // @Param === 스프링의 @PathVariable
-  getOne(@Param('id') id) {
-    return `This will return id:${id} movie`;
+  getOne(@Param('id') id: number): Movie {
+    return this.moviesService.getOne(id);
   }
 
   @Post()
-  create(@Body() movieData: object) {
-    return movieData;
+  create(@Body() newMovie: CreateMovieDto) {
+    this.moviesService.create(newMovie);
   }
 
   @Delete(':id')
-  delete(@Param('id') id) {
-    return `This will delete ${id} movie`;
+  delete(@Param('id') id: number) {
+    this.moviesService.delete(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id, @Body() updateData: object) {
-    return {
-      movieId: id,
-      ...updateData,
-    };
+  update(@Param('id') id: number, @Body() updateData: UpdateMovieDto) {
+    return this.moviesService.update(id, updateData);
   }
 }
