@@ -81,4 +81,18 @@ describe('MoviesService', () => {
       expect(service.getAll()).toContain(service.getOne(1));
     });
   });
+
+  describe('update', () => {
+    it('updates a movie', () => {
+      service.create({
+        title: 'Test Movie',
+        year: 2022,
+        genres: ['Action'],
+      });
+
+      service.update(1, { title: 'Update movie', year: 2023 });
+
+      expect(service.getOne(1).title).toEqual('Update movie');
+    });
+  });
 });
